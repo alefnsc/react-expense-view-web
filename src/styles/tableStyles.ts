@@ -1,9 +1,7 @@
 import TableHead from "@mui/material/TableHead";
 import styled from "@emotion/styled";
 import Table from "@mui/material/Table";
-
 import TableCell from "@mui/material/TableCell";
-
 import TableRow from "@mui/material/TableRow";
 
 export const StyledTable = styled(Table)`

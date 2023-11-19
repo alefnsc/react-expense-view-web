@@ -5,12 +5,14 @@ import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import { FormControl, InputLabel, MenuItem, Box } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { useParams } from "react-router-dom";
 import {
   StyledTable,
   StyledTableCell,
   StyledTableRow,
   StyledTableHead,
 } from "../styles/tableStyles.ts";
+import { useNavigate } from "react-router-dom";
 
 interface Expense {
   id: number;
@@ -28,13 +30,43 @@ function createData({ id, descricao, categoria, valor, mes, dia }: Expense) {
 export default function ReactExpenseViewWeb() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [rows, setRows] = useState<Expense[]>([]);
-  const [month, setMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [yearArray, setYearArray] = useState<string[]>([]);
+  const [totalExpenses, setTotalExpenses] = useState("0");
 
-  const expenseKeys = ["ID", "DESCRIÇÃO", "CATEGORIA", "VALOR", "MÊS", "DIA"];
+  const { month } = useParams<{ month: string }>();
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setMonth(event.target.value as string);
+  const expenseKeys = ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
+
+  const handleYearChange = (event: SelectChangeEvent) => {
+    setSelectedYear(event.target.value);
   };
+
+  const handleMonthChange = (event: SelectChangeEvent) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (selectedMonth !== "" && selectedYear !== "") {
+      navigate(`/expenses/${selectedYear}-${selectedMonth}`);
+    }
+  }, [selectedMonth, selectedYear, navigate]);
+
+  useEffect(() => {
+    const newRows = expenses
+      .filter((expense) => {
+        return expense.mes === month;
+      })
+      .map((expense) => createData(expense));
+    const totalYearMonthExpenses = newRows
+      .reduce((total, expense) => total + expense.valor, 0)
+      .toLocaleString("en-US");
+    setTotalExpenses(totalYearMonthExpenses);
+    setRows(newRows);
+  }, [expenses, month]);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -52,6 +84,10 @@ export default function ReactExpenseViewWeb() {
     } else {
       const newRows = expenses.map((expense) => createData(expense));
       setRows(newRows);
+      const yearArrayData = [
+        ...new Set(expenses.map((expense) => expense.mes.split("-")[0])),
+      ];
+      setYearArray(yearArrayData);
     }
   }, [expenses]);
 
@@ -71,24 +107,80 @@ export default function ReactExpenseViewWeb() {
   ];
   return (
     <>
-      <Box style={{ width: "40%", padding: "20px" }}>
-        <FormControl fullWidth>
-          <InputLabel id="select-month-label">Month</InputLabel>
-          <Select
-            labelId="select-month-label"
-            id="select-month"
-            value={month}
-            label="Month"
-            onChange={handleChange}
+      <Box
+        style={{
+          padding: "20px",
+          display: "flex",
+          flexDirection: "row",
+          margin: "5px",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
+          style={{
+            width: "40%",
+            display: "flex",
+          }}
+        >
+          <FormControl
+            fullWidth
+            style={{
+              margin: "5px",
+            }}
           >
-            {monthArray.map((month, index) => (
-              <MenuItem key={index} value={month}>
-                {month}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <InputLabel id="select-month-label">Year</InputLabel>
+            <Select
+              labelId="select-month-label"
+              id="select-month"
+              value={selectedYear}
+              label="Month"
+              onChange={handleYearChange}
+            >
+              {yearArray.map((year, index) => (
+                <MenuItem key={index} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl
+            fullWidth
+            style={{
+              margin: "5px",
+            }}
+          >
+            <InputLabel id="select-month-label">Month</InputLabel>
+            <Select
+              labelId="select-month-label"
+              id="select-month"
+              value={selectedMonth}
+              label="Month"
+              onChange={handleMonthChange}
+            >
+              {monthArray.map((month, index) => (
+                <MenuItem
+                  key={index}
+                  value={(index + 1).toString().padStart(2, "0")}
+                >
+                  {month}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <b style={{ margin: "10px" }}>Total Expenses:</b>
+          <span>{totalExpenses}</span>
+        </Box>
       </Box>
+
       <TableContainer component={Paper}>
         <StyledTable
           sx={{ minWidth: 650, width: "100%" }}
@@ -104,21 +196,39 @@ export default function ReactExpenseViewWeb() {
             </StyledTableRow>
           </StyledTableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows &&
+              rows.map((row) => (
+                <StyledTableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <StyledTableCell>{row.descricao}</StyledTableCell>
+                  <StyledTableCell>{row.categoria}</StyledTableCell>
+                  <StyledTableCell>
+                    {row.valor.toFixed(2).toString().toLocaleString("en-US")}
+                  </StyledTableCell>
+                  <StyledTableCell>{row.mes.split("-")[1]}</StyledTableCell>
+                  <StyledTableCell>{row.dia}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            {rows.length < 1 && (
               <StyledTableRow
-                key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <StyledTableCell component="th" scope="row">
-                  {row.id}
+                <StyledTableCell
+                  style={{
+                    color: "red",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                  }}
+                  colSpan={5}
+                  align="center"
+                >
+                  No expenses found for the selected period.
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.descricao}</StyledTableCell>
-                <StyledTableCell align="right">{row.categoria}</StyledTableCell>
-                <StyledTableCell align="right">{row.valor}</StyledTableCell>
-                <StyledTableCell align="right">{row.mes}</StyledTableCell>
-                <StyledTableCell align="right">{row.dia}</StyledTableCell>
               </StyledTableRow>
-            ))}
+            )}
           </TableBody>
         </StyledTable>
       </TableContainer>
