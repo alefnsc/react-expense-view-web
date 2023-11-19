@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { SelectChangeEvent, Box } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material";
 
 import { ControlsContainer } from "../components/ControlsContainer.tsx";
 import { ControlSelect } from "../components/ControlSelect.tsx";
