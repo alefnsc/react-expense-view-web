@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:3001";
+const apiUrl = "https://react-expense-view-api-afonseca.glitch.me";
 
-export async function getExpenses(yearMonth?: string) {
-  const url = `${apiUrl}/despesas?_sort=mes,dia`;
+export async function getExpenses() {
+  const url = `${apiUrl}/?_sort=mes,dia`;
   // if (yearMonth) {
   //   url += `?mes=${yearMonth}&_sort=dia`;
   // } else {
