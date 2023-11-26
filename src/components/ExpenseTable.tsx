@@ -24,7 +24,6 @@ export const ExpenseTable = React.memo(function ({
   function isExpense(row: Expense | ExpenseCategory): row is Expense {
     return (row as Expense).descricao !== undefined;
   }
-  console.log("render ExpenseTable");
   return (
     <TableContainer component={Paper}>
       <StyledTable

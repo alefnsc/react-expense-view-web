@@ -87,13 +87,33 @@ export default function ReactExpenseViewWeb() {
     setTotalExpenses(getTotalExpenses(rows));
   }, [rows]);
 
+  const setRowsFromExpenses = useCallback(
+    (expenses: Expense[]) => {
+      const newRows = expenses
+        .filter((expense) => expense.mes === month)
+        .map((expense) => createData(expense));
+      setRows(newRows);
+    },
+    [month]
+  );
+
+  // ...
+
+  useMemo(() => {
+    setRowsFromExpenses(expenses);
+  }, [expenses, setRowsFromExpenses]);
+
   // Fetch expenses from API
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const data = await getExpenses();
-        const spreadData = [...data];
-        setExpenses(spreadData as Expense[]);
+        const data: Expense[] = await getExpenses();
+        setExpenses(data);
+        setRowsFromExpenses(data);
+        const yearArrayData = [
+          ...new Set(data.map((expense) => expense.mes.split("-")[0])),
+        ];
+        setYearArray(yearArrayData);
       } catch (error) {
         console.error("Error fetching expenses:", error);
       }
@@ -101,15 +121,8 @@ export default function ReactExpenseViewWeb() {
 
     if (expenses.length === 0) {
       fetchExpenses();
-    } else {
-      const newRows = expenses.map((expense) => createData(expense));
-      setRows(newRows);
-      const yearArrayData = [
-        ...new Set(expenses.map((expense) => expense.mes.split("-")[0])),
-      ];
-      setYearArray(yearArrayData);
     }
-  }, [expenses]);
+  }, [expenses, setRowsFromExpenses]);
 
   return (
     <>

@@ -17,7 +17,6 @@ export default function LoginPage(props: ILoginScreenProps) {
 
     signInEndpoint(email, password).then(
       (user) => {
-        console.log(user);
         props.onSignIn(user);
       },
       () => setError("Invalid credentials")
@@ -52,6 +51,7 @@ export default function LoginPage(props: ILoginScreenProps) {
               color="primary"
               onChange={(evt) => setEmail(evt.target.value)}
               value={email}
+              autoComplete="email"
             ></TextField>
             <TextField
               type="password"
@@ -60,6 +60,7 @@ export default function LoginPage(props: ILoginScreenProps) {
               color="primary"
               onChange={(evt) => setPassword(evt.target.value)}
               value={password}
+              autoComplete="current-password"
             ></TextField>
             {error && (
               <Box className="bg-red-100 rounded-md p-4 my-4">{error}</Box>

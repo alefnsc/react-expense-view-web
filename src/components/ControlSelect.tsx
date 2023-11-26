@@ -16,7 +16,6 @@ export const ControlSelect = React.memo(function ({
   const handleSelectChange = (event: SelectChangeEvent) => {
     onChange(event);
   };
-  console.log("render Control Select");
   return (
     <FormControl
       fullWidth

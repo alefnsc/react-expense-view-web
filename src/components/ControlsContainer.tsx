@@ -6,7 +6,6 @@ interface ControlsContainerProps {
 export const ControlsContainer = React.memo(function ({
   children,
 }: ControlsContainerProps) {
-  console.log("render ControlsContainer");
   return (
     <Box
       style={{
