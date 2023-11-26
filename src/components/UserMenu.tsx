@@ -24,12 +24,12 @@ export function UserMenu() {
   return (
     <div className=" absolute top-0  right-0 border-b w-full">
       <IconButton
-        className=" float-right"
+        className=" float-right  sm:right-30 md:right-40 lg:right-80 xl:right-96"
         aria-controls="simple-menu"
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Avatar className="absolute sm:right-10 md:right-20 lg:right-40">
+        <Avatar>
           <Icon>{user.nome}</Icon>
         </Avatar>
       </IconButton>
@@ -40,7 +40,7 @@ export function UserMenu() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <div className="px-10 py-5 flex flex-col flex-1 justify-center items-center">
+        <div className="px-10 py-5 flex flex-col justify-center items-center">
           <Avatar>
             <Icon>person</Icon>
           </Avatar>

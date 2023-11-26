@@ -19,7 +19,7 @@ export function ExpenseTable({ rows }: ExpenseTableProps) {
   return (
     <TableContainer component={Paper}>
       <StyledTable
-        sx={{ minWidth: 650, width: "100%" }}
+        sx={{ minWidth: 300, width: "100%" }}
         aria-label="simple table"
       >
         <StyledTableHead>
