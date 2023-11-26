@@ -29,7 +29,7 @@ function App() {
     return (
       <authContext.Provider value={{ user, onSignOut }}>
         <Router>
-          <UserMenu onSignIn={setUser} />
+          <UserMenu />
           <Routes>
             <Route path="/error" element={<ErrorPage />} />
             <Route path="/expenses/:month" element={<ReactExpenseViewWeb />} />
