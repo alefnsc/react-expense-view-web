@@ -28,7 +28,7 @@ export default function LoginPage(props: ILoginScreenProps) {
       <h2 className=" text-gray-700  text-4xl mb-5 col-span-2">
         React Expense View
       </h2>
-      <Box className="border-gray-400 border-3 bg-gradient-to-br from-green-200 via-white to-green-200 rounded-2xl shadow-2xl grid grid-row-2 gap-1 border sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1200px]  w-full p-6 space-x-6 ">
+      <Box className="border-gray-400 border-3 bg-gradient-to-br from-blue-200 via-white to-blue-200 rounded-2xl shadow-2xl grid grid-row-2 gap-1 border sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1200px]  w-full p-6 space-x-6 ">
         <Box className="col-start-1  rounded-lg ">
           <h2 className="text-gray-900  text-3xl p-6">Login Page</h2>
           <p className=" text-gray-700 p-4 text-2xl">
@@ -49,7 +49,7 @@ export default function LoginPage(props: ILoginScreenProps) {
               type="text"
               label="Email"
               variant="outlined"
-              color="success"
+              color="primary"
               onChange={(evt) => setEmail(evt.target.value)}
               value={email}
             ></TextField>
@@ -57,19 +57,14 @@ export default function LoginPage(props: ILoginScreenProps) {
               type="password"
               label="Password"
               variant="outlined"
-              color="success"
+              color="primary"
               onChange={(evt) => setPassword(evt.target.value)}
               value={password}
             ></TextField>
             {error && (
               <Box className="bg-red-100 rounded-md p-4 my-4">{error}</Box>
             )}
-            <Button
-              variant="contained"
-              color="success"
-              type="submit"
-              className="bg-green-600 p-6"
-            >
+            <Button variant="contained" color="primary" type="submit">
               Login
             </Button>
           </form>
