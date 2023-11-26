@@ -2,10 +2,9 @@ import { IconButton, Icon, Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { signOutEndpoint } from "../services/backend";
 import { useAuthContext } from "../hooks/authContext";
-import { IUser } from "../types/userType";
 
-export function UserMenu({ onSignIn }: { onSignIn: (user: IUser) => void }) {
-  const { user } = useAuthContext();
+export function UserMenu() {
+  const { user, onSignOut } = useAuthContext();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -17,9 +16,9 @@ export function UserMenu({ onSignIn }: { onSignIn: (user: IUser) => void }) {
     setAnchorEl(null);
   };
 
-  async function signOut() {
-    await signOutEndpoint();
-    onSignIn(null);
+  function signOut() {
+    signOutEndpoint();
+    onSignOut();
   }
 
   return (

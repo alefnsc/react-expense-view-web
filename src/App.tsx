@@ -13,6 +13,7 @@ import { getUserEndpoint } from "./services/backend";
 import LoginPage from "./pages/LoginPage";
 import { IUser } from "./types/userType";
 import { UserMenu } from "./components/UserMenu";
+import { authContext } from "./hooks/authContext";
 
 function App() {
   const [user, setUser] = useState<IUser | null>(null);
@@ -26,15 +27,17 @@ function App() {
   }
   if (user) {
     return (
-      <Router>
-        <UserMenu onSignIn={setUser} />
-        <Routes>
-          <Route path="/error" element={<ErrorPage />} />
-          <Route path="/expenses/:month" element={<ReactExpenseViewWeb />} />
-          <Route path="/expenses" element={<Navigate to="/expenses/all" />} />
-          <Route path="*" element={<Navigate to="/expenses/all" />} />
-        </Routes>
-      </Router>
+      <authContext.Provider value={{ user, onSignOut }}>
+        <Router>
+          <UserMenu onSignIn={setUser} />
+          <Routes>
+            <Route path="/error" element={<ErrorPage />} />
+            <Route path="/expenses/:month" element={<ReactExpenseViewWeb />} />
+            <Route path="/expenses" element={<Navigate to="/expenses/all" />} />
+            <Route path="*" element={<Navigate to="/expenses/all" />} />
+          </Routes>
+        </Router>
+      </authContext.Provider>
     );
   } else {
     return <LoginPage onSignIn={setUser} />;
