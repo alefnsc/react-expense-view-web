@@ -8,7 +8,7 @@ import { ControlsContainer } from "../components/ControlsContainer.tsx";
 import { ControlSelect } from "../components/ControlSelect.tsx";
 import TotalExpense from "../components/TotalExpense.tsx";
 import { ExpenseTable } from "../components/ExpenseTable.tsx";
-import { getExpenses } from "../services/expenseService";
+import { getExpenses } from "../services/backend.ts";
 import {
   createData,
   formatCurrency,
