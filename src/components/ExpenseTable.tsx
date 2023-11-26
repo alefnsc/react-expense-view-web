@@ -12,14 +12,23 @@ import { formatCurrency } from "../helpers/tableHelpers.ts";
 
 interface ExpenseTableProps {
   rows: Expense[];
+  tab: string;
 }
 
-export function ExpenseTable({ rows }: ExpenseTableProps) {
-  const tableHeaders = ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
+export function ExpenseTable({ rows, tab }: ExpenseTableProps) {
+  let tableHeaders: string[] = [];
+
+  if (tab === "Summary") {
+    tableHeaders = ["CATEGORY", "VALUE"];
+  }
+  if (tab === "Detail") {
+    tableHeaders = ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
+  }
+
   return (
     <TableContainer component={Paper}>
       <StyledTable
-        sx={{ minWidth: 300, width: "100%" }}
+        sx={{ minWidth: 500, width: "100%" }}
         aria-label="simple table"
       >
         <StyledTableHead>
@@ -38,11 +47,17 @@ export function ExpenseTable({ rows }: ExpenseTableProps) {
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <StyledTableCell>{row.descricao}</StyledTableCell>
+                {tab === "Detail" && (
+                  <StyledTableCell>{row.descricao}</StyledTableCell>
+                )}
                 <StyledTableCell>{row.categoria}</StyledTableCell>
                 <StyledTableCell>{formatCurrency(row.valor)}</StyledTableCell>
-                <StyledTableCell>{row.mes.split("-")[1]}</StyledTableCell>
-                <StyledTableCell>{row.dia}</StyledTableCell>
+                {tab === "Detail" && (
+                  <>
+                    <StyledTableCell>{row.mes.split("-")[1]}</StyledTableCell>
+                    <StyledTableCell>{row.dia}</StyledTableCell>
+                  </>
+                )}
               </StyledTableRow>
             ))}
           {rows.length < 1 && (

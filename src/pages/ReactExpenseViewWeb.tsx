@@ -24,10 +24,10 @@ export default function ReactExpenseViewWeb() {
   const [selectedYear, setSelectedYear] = useState("");
   const [yearArray, setYearArray] = useState<string[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [value, setValue] = useState("one");
+  const [selectedTab, setSelectedTab] = useState("Summary");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+    setSelectedTab(newValue);
   };
 
   const { month } = useParams<{ month: string }>();
@@ -114,17 +114,17 @@ export default function ReactExpenseViewWeb() {
       </ControlsContainer>
       <Box className="flex flex-row items-center justify-center">
         <Tabs
-          value={value}
+          value={selectedTab}
           onChange={handleChange}
-          textColor="secondary"
-          indicatorColor="secondary"
+          textColor="primary"
+          indicatorColor="primary"
           aria-label="Table Tabs"
         >
-          <Tab value="Category" label="Category" />
+          <Tab value="Summary" label="Summary" />
           <Tab value="Detail" label="Detail" />
         </Tabs>
       </Box>
-      <ExpenseTable rows={rows} />
+      <ExpenseTable rows={rows} tab={selectedTab} />
     </>
   );
 }

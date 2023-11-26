@@ -13,6 +13,7 @@ export function ControlsContainer({ children }: ControlsContainerProps) {
         flexDirection: "row",
         margin: "5px",
         justifyContent: "space-between",
+        width: "100%",
       }}
     >
       {children}
