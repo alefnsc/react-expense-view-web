@@ -134,7 +134,7 @@ export default function ReactExpenseViewWeb() {
       <Box className="flex flex-row items-center justify-center">
         <Tabs
           value={selectedTab}
-          onChange={(event, newValue) => setSelectedTab(newValue)}
+          onChange={(_, newValue) => setSelectedTab(newValue)}
           textColor="primary"
           indicatorColor="primary"
           aria-label="Table Tabs"
