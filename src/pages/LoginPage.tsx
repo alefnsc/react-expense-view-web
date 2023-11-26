@@ -20,7 +20,7 @@ export default function LoginPage(props: ILoginScreenProps) {
         console.log(user);
         props.onSignIn(user);
       },
-      (e) => setError("Invalid credentials")
+      () => setError("Invalid credentials")
     );
   }
   return (

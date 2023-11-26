@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { SelectChangeEvent } from "@mui/material";
+import { Box, SelectChangeEvent, Tab, Tabs } from "@mui/material";
 
 import { ControlsContainer } from "../components/ControlsContainer.tsx";
 import { ControlSelect } from "../components/ControlSelect.tsx";
@@ -24,6 +24,11 @@ export default function ReactExpenseViewWeb() {
   const [selectedYear, setSelectedYear] = useState("");
   const [yearArray, setYearArray] = useState<string[]>([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [value, setValue] = useState("one");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const { month } = useParams<{ month: string }>();
 
@@ -89,6 +94,7 @@ export default function ReactExpenseViewWeb() {
 
   return (
     <>
+      <Box display="flex" justifyContent="flex-end" p={5}></Box>
       <ControlsContainer>
         <SelectsContainer>
           <ControlSelect
@@ -106,6 +112,18 @@ export default function ReactExpenseViewWeb() {
         </SelectsContainer>
         <TotalExpense totalExpenses={formatCurrency(totalExpenses)} />
       </ControlsContainer>
+      <Box className="flex flex-row items-center justify-center">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          aria-label="Table Tabs"
+        >
+          <Tab value="Category" label="Category" />
+          <Tab value="Detail" label="Detail" />
+        </Tabs>
+      </Box>
       <ExpenseTable rows={rows} />
     </>
   );

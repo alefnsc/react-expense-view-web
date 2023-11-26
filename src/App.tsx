@@ -12,6 +12,7 @@ import {
 import { getUserEndpoint } from "./services/backend";
 import LoginPage from "./pages/LoginPage";
 import { IUser } from "./types/userType";
+import { UserMenu } from "./components/UserMenu";
 
 function App() {
   const [user, setUser] = useState<IUser | null>(null);
@@ -26,6 +27,7 @@ function App() {
   if (user) {
     return (
       <Router>
+        <UserMenu onSignIn={setUser} />
         <Routes>
           <Route path="/error" element={<ErrorPage />} />
           <Route path="/expenses/:month" element={<ReactExpenseViewWeb />} />

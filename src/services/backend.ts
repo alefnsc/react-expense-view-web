@@ -1,19 +1,20 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { IUser } from "../types/userType";
 
 const apiUrl = "http://localhost:3001/despesas";
 
-//Expenses
+// Expenses
 export async function getExpenses() {
-  const response = await axios.get(apiUrl);
+  const url = `${apiUrl}/?_sort=mes,dia,valor`;
+  const response = await axios.get(url, { withCredentials: true });
   return response.data;
 }
 
-//Users
+// Users
 
 export async function getUserEndpoint(): Promise<IUser> {
-  const resp = await fetch(`http://localhost:3001/sessao/usuario`, {
-    credentials: "include",
+  const resp = await axios.get(`http://localhost:3001/sessao/usuario`, {
+    withCredentials: true,
   });
   return handleResponse(resp);
 }
@@ -22,28 +23,36 @@ export async function signInEndpoint(
   email: string,
   password: string
 ): Promise<IUser> {
-  const resp = await fetch(`http://localhost:3001/sessao/criar`, {
-    credentials: "include",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const resp = await axios.post(
+    `http://localhost:3001/sessao/criar`,
+    {
+      email,
+      senha: password,
     },
-    body: JSON.stringify({ email, senha: password }),
-  });
+    {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return handleResponse(resp);
 }
 
 export async function signOutEndpoint(): Promise<IUser> {
-  const resp = await fetch(`http://localhost:3001/sessao/finalizar`, {
-    credentials: "include",
-    method: "POST",
-  });
+  const resp = await axios.post(
+    `http://localhost:3001/sessao/finalizar`,
+    null,
+    {
+      withCredentials: true,
+    }
+  );
   return handleResponse(resp);
 }
 
-function handleResponse(resp: Response) {
-  if (resp.ok) {
-    return resp.json();
+function handleResponse(resp: AxiosResponse<IUser>) {
+  if (resp.status === 200) {
+    return resp.data;
   } else {
     throw new Error(resp.statusText);
   }
