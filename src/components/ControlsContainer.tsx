@@ -1,10 +1,12 @@
 import { Box } from "@mui/material";
-
+import React from "react";
 interface ControlsContainerProps {
   children: React.ReactNode;
 }
-
-export function ControlsContainer({ children }: ControlsContainerProps) {
+export const ControlsContainer = React.memo(function ({
+  children,
+}: ControlsContainerProps) {
+  console.log("render ControlsContainer");
   return (
     <Box
       style={{
@@ -19,4 +21,4 @@ export function ControlsContainer({ children }: ControlsContainerProps) {
       {children}
     </Box>
   );
-}
+});

@@ -8,25 +8,23 @@ import {
   StyledTableHead,
 } from "../styles/tableStyles.ts";
 import { Expense, ExpenseCategory } from "../types/expenseType.ts";
-import { formatCurrency } from "../helpers/tableHelpers.ts";
-
+import { formatCurrency, getTableHeaders } from "../helpers/tableHelpers.ts";
+import React from "react";
 interface ExpenseTableProps {
   rows: Expense[] | ExpenseCategory[];
   tab: string;
 }
 
-export function ExpenseTable({ rows, tab }: ExpenseTableProps) {
-  let tableHeaders: string[] = [];
+export const ExpenseTable = React.memo(function ({
+  rows,
+  tab,
+}: ExpenseTableProps) {
+  const tableHeaders: string[] = getTableHeaders(tab) ?? [];
 
-  if (tab === "Summary") {
-    tableHeaders = ["CATEGORY", "VALUE"];
-  }
-  if (tab === "Detail") {
-    tableHeaders = ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
-  }
   function isExpense(row: Expense | ExpenseCategory): row is Expense {
     return (row as Expense).descricao !== undefined;
   }
+  console.log("render ExpenseTable");
   return (
     <TableContainer component={Paper}>
       <StyledTable
@@ -84,4 +82,4 @@ export function ExpenseTable({ rows, tab }: ExpenseTableProps) {
       </StyledTable>
     </TableContainer>
   );
-}
+});

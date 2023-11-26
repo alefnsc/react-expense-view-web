@@ -1,10 +1,12 @@
 import { Box } from "@mui/material";
-
+import React from "react";
 interface SelectsContainerProps {
   children: React.ReactNode;
 }
 
-export function SelectsContainer({ children }: SelectsContainerProps) {
+export const SelectsContainer = React.memo(function ({
+  children,
+}: SelectsContainerProps) {
   return (
     <Box
       style={{
@@ -15,4 +17,4 @@ export function SelectsContainer({ children }: SelectsContainerProps) {
       {children}
     </Box>
   );
-}
+});

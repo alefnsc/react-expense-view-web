@@ -1,14 +1,13 @@
 import { FormControl, InputLabel, MenuItem } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-
+import React from "react";
 interface ControlSelectProps {
   label: string;
   value: string;
   options: string[];
   onChange: (event: SelectChangeEvent) => void;
 }
-
-export function ControlSelect({
+export const ControlSelect = React.memo(function ({
   label,
   value,
   onChange,
@@ -17,6 +16,7 @@ export function ControlSelect({
   const handleSelectChange = (event: SelectChangeEvent) => {
     onChange(event);
   };
+  console.log("render Control Select");
   return (
     <FormControl
       fullWidth
@@ -40,4 +40,4 @@ export function ControlSelect({
       </Select>
     </FormControl>
   );
-}
+});

@@ -1,10 +1,13 @@
 import { Box } from "@mui/material";
+import React from "react";
 
 interface TotalExpenseProps {
   totalExpenses: string;
 }
 
-export default function TotalExpense({ totalExpenses }: TotalExpenseProps) {
+export const TotalExpense = React.memo(function ({
+  totalExpenses,
+}: TotalExpenseProps) {
   return (
     <Box
       style={{
@@ -17,4 +20,4 @@ export default function TotalExpense({ totalExpenses }: TotalExpenseProps) {
       <span>{totalExpenses}</span>
     </Box>
   );
-}
+});

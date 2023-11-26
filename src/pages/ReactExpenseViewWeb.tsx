@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -6,12 +6,13 @@ import { Box, SelectChangeEvent, Tab, Tabs } from "@mui/material";
 
 import { ControlsContainer } from "../components/ControlsContainer.tsx";
 import { ControlSelect } from "../components/ControlSelect.tsx";
-import TotalExpense from "../components/TotalExpense.tsx";
+import { TotalExpense } from "../components/TotalExpense.tsx";
 import { ExpenseTable } from "../components/ExpenseTable.tsx";
 import { getExpenses } from "../services/backend.ts";
 import {
   createData,
   formatCurrency,
+  getTotalExpenses,
   monthArray,
 } from "../helpers/tableHelpers.ts";
 import { Expense, ExpenseCategory } from "../types/expenseType.ts";
@@ -27,28 +28,22 @@ export default function ReactExpenseViewWeb() {
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [selectedTab, setSelectedTab] = useState("Summary");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setSelectedTab(newValue);
-  };
-
   const { month } = useParams<{ month: string }>();
 
-  const handleYearChange = (event: SelectChangeEvent) => {
-    setSelectedYear(event.target.value);
-  };
+  const navigate = useNavigate();
 
-  const handleMonthChange = (event: SelectChangeEvent) => {
+  const handleYearChange = useCallback((event: SelectChangeEvent): void => {
+    setSelectedYear(event.target.value);
+  }, []);
+
+  const handleMonthChange = useCallback((event: SelectChangeEvent): void => {
     const monthNumber = (monthArray.indexOf(event.target.value) + 1)
       .toString()
       .padStart(2, "0");
     setSelectedMonth(monthNumber);
-  };
+  }, []);
 
-  function getTotalExpenses(rows: Expense[]) {
-    return rows.reduce((total, expense) => total + expense.valor, 0);
-  }
-
-  const navigate = useNavigate();
+  // Generate path based on selected month and year and navigate to it
 
   useEffect(() => {
     if (selectedMonth !== "" && selectedYear !== "") {
@@ -56,7 +51,7 @@ export default function ReactExpenseViewWeb() {
     }
   }, [selectedMonth, selectedYear, navigate]);
 
-  useEffect(() => {
+  useMemo(() => {
     const newRows = expenses
       .filter((expense) => {
         return expense.mes === month;
@@ -65,7 +60,7 @@ export default function ReactExpenseViewWeb() {
     setRows(newRows);
   }, [expenses, month]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (selectedTab === "Summary") {
       const newRows = rows.reduce((acc, expense) => {
         const categoryIndex = acc.findIndex(
@@ -87,11 +82,12 @@ export default function ReactExpenseViewWeb() {
     }
   }, [selectedTab, rows]);
 
+  // Calculate total expenses
   useEffect(() => {
-    const total = getTotalExpenses(rows);
-    setTotalExpenses(total);
+    setTotalExpenses(getTotalExpenses(rows));
   }, [rows]);
 
+  // Fetch expenses from API
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
@@ -138,7 +134,7 @@ export default function ReactExpenseViewWeb() {
       <Box className="flex flex-row items-center justify-center">
         <Tabs
           value={selectedTab}
-          onChange={handleChange}
+          onChange={(event, newValue) => setSelectedTab(newValue)}
           textColor="primary"
           indicatorColor="primary"
           aria-label="Table Tabs"

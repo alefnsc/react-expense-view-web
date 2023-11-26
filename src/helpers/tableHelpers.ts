@@ -32,3 +32,16 @@ export function createData({
 }: Expense) {
   return { id, descricao, categoria, valor, mes, dia };
 }
+
+export function getTableHeaders(tab: string) {
+  if (tab === "Summary") {
+    return ["CATEGORY", "VALUE"];
+  }
+  if (tab === "Detail") {
+    return ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
+  }
+}
+
+export function getTotalExpenses(rows: Expense[]) {
+  return rows.reduce((total, expense) => total + expense.valor, 0);
+}
