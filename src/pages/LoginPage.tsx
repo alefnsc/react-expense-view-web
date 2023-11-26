@@ -14,7 +14,7 @@ export default function LoginPage(props: ILoginScreenProps) {
 
   function signIn(evt: React.FormEvent) {
     evt.preventDefault();
-    console.log("signIn");
+
     signInEndpoint(email, password).then(
       (user) => {
         console.log(user);
