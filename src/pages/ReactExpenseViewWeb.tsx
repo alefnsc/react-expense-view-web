@@ -1,9 +1,7 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
 import { Box, SelectChangeEvent, Tab, Tabs } from "@mui/material";
-
 import { ControlsContainer } from "../components/ControlsContainer.tsx";
 import { ControlSelect } from "../components/ControlSelect.tsx";
 import { TotalExpense } from "../components/TotalExpense.tsx";
@@ -17,30 +15,138 @@ import {
 } from "../helpers/tableHelpers.ts";
 import { Expense, ExpenseCategory } from "../types/expenseType.ts";
 import { SelectsContainer } from "../components/SelectsContainer.tsx";
+import { useReducer } from "react";
+
+function reducer(
+  state: IReactExpenseViewWebState,
+  action: IReactExpenseViewWebAction
+) {
+  switch (action.type) {
+    case "LOAD_MONTH_EXPENSES":
+      return {
+        ...state,
+        expenses: action.payload.expenses,
+      };
+    case "SET_TOTAL_EXPENSES":
+      return {
+        ...state,
+        totalExpenses: action.payload.totalExpenses,
+      };
+    case "TOTAL_CATEGORY_EXPENSES":
+      return {
+        ...state,
+        categoryRows: action.payload.categoryRows,
+      };
+    case "TOTAL_DETAIL_EXPENSES":
+      return {
+        ...state,
+        rows: action.payload.rows,
+      };
+    case "SET_SELECTED_YEAR":
+      return {
+        ...state,
+        selectedYear: action.payload.selectedYear,
+      };
+    case "SET_SELECTED_MONTH":
+      return {
+        ...state,
+        selectedMonth: action.payload.selectedMonth,
+      };
+    case "SET_SELECTED_TAB":
+      return {
+        ...state,
+        selectedTab: action.payload.selectedTab,
+      };
+    case "SET_YEAR_ARRAY":
+      return {
+        ...state,
+        yearArray: action.payload.yearArray,
+      };
+    case "SET_ROWS":
+      return {
+        ...state,
+        rows: action.payload.rows,
+      };
+    case "SET_CATEGORY_ROWS":
+      return {
+        ...state,
+        categoryRows: action.payload.categoryRows,
+      };
+
+    default:
+      return state;
+  }
+}
+
+type IReactExpenseViewWebAction =
+  | { type: "LOAD_MONTH_EXPENSES"; payload: { expenses: Expense[] } }
+  | { type: "LOAD_EXPENSES"; payload: { expenses: Expense[] } }
+  | { type: "TOTAL_DETAIL_EXPENSES"; payload: { rows: Expense[] } }
+  | {
+      type: "TOTAL_CATEGORY_EXPENSES";
+      payload: { categoryRows: ExpenseCategory[] };
+    }
+  | { type: "SET_SELECTED_YEAR"; payload: { selectedYear: string } }
+  | { type: "SET_YEAR_ARRAY"; payload: { yearArray: string[] } }
+  | { type: "SET_SELECTED_MONTH"; payload: { selectedMonth: string } }
+  | { type: "SET_SELECTED_TAB"; payload: { selectedTab: string } }
+  | { type: "SET_ROWS"; payload: { rows: Expense[] } }
+  | { type: "SET_CATEGORY_ROWS"; payload: { categoryRows: ExpenseCategory[] } }
+  | { type: "SET_TOTAL_EXPENSES"; payload: { totalExpenses: number } };
+
+interface IReactExpenseViewWebState {
+  expenses: Expense[];
+  rows: Expense[];
+  categoryRows: ExpenseCategory[];
+  selectedMonth: string;
+  selectedYear: string;
+  yearArray: string[];
+  totalExpenses: number;
+  selectedTab: string;
+}
 
 export default function ReactExpenseViewWeb() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [rows, setRows] = useState<Expense[]>([]);
-  const [categoryRows, setCategoryRows] = useState<ExpenseCategory[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [yearArray, setYearArray] = useState<string[]>([]);
-  const [totalExpenses, setTotalExpenses] = useState(0);
-  const [selectedTab, setSelectedTab] = useState("Summary");
+  const [state, dispatch] = useReducer(reducer, {
+    expenses: [],
+    rows: [],
+    categoryRows: [],
+    selectedMonth: "",
+    selectedYear: "",
+    yearArray: [],
+    totalExpenses: 0,
+    selectedTab: "Summary",
+  });
+
+  const {
+    expenses,
+    rows,
+    categoryRows,
+    selectedMonth,
+    selectedYear,
+    yearArray,
+    totalExpenses,
+    selectedTab,
+  } = state;
 
   const { month } = useParams<{ month: string }>();
 
   const navigate = useNavigate();
 
   const handleYearChange = useCallback((event: SelectChangeEvent): void => {
-    setSelectedYear(event.target.value);
+    dispatch({
+      type: "SET_SELECTED_YEAR",
+      payload: { selectedYear: event.target.value },
+    });
   }, []);
 
   const handleMonthChange = useCallback((event: SelectChangeEvent): void => {
     const monthNumber = (monthArray.indexOf(event.target.value) + 1)
       .toString()
       .padStart(2, "0");
-    setSelectedMonth(monthNumber);
+    dispatch({
+      type: "SET_SELECTED_MONTH",
+      payload: { selectedMonth: monthNumber },
+    });
   }, []);
 
   // Generate path based on selected month and year and navigate to it
@@ -57,7 +163,7 @@ export default function ReactExpenseViewWeb() {
         return expense.mes === month;
       })
       .map((expense) => createData(expense));
-    setRows(newRows);
+    dispatch({ type: "SET_ROWS", payload: { rows: newRows } });
   }, [expenses, month]);
 
   useMemo(() => {
@@ -77,14 +183,20 @@ export default function ReactExpenseViewWeb() {
         }
         return acc;
       }, [] as ExpenseCategory[]);
-
-      setCategoryRows(newRows);
+      dispatch({
+        type: "SET_CATEGORY_ROWS",
+        payload: { categoryRows: newRows },
+      });
     }
   }, [selectedTab, rows]);
 
   // Calculate total expenses
   useEffect(() => {
-    setTotalExpenses(getTotalExpenses(rows));
+    const totalExpensesData: number = getTotalExpenses(rows);
+    dispatch({
+      type: "SET_TOTAL_EXPENSES",
+      payload: { totalExpenses: totalExpensesData },
+    });
   }, [rows]);
 
   const setRowsFromExpenses = useCallback(
@@ -92,7 +204,7 @@ export default function ReactExpenseViewWeb() {
       const newRows = expenses
         .filter((expense) => expense.mes === month)
         .map((expense) => createData(expense));
-      setRows(newRows);
+      dispatch({ type: "SET_ROWS", payload: { rows: newRows } });
     },
     [month]
   );
@@ -108,12 +220,19 @@ export default function ReactExpenseViewWeb() {
     const fetchExpenses = async () => {
       try {
         const data: Expense[] = await getExpenses();
-        setExpenses(data);
+        dispatch({ type: "LOAD_MONTH_EXPENSES", payload: { expenses: data } });
         setRowsFromExpenses(data);
         const yearArrayData = [
           ...new Set(data.map((expense) => expense.mes.split("-")[0])),
         ];
-        setYearArray(yearArrayData);
+        dispatch({
+          type: "SET_SELECTED_YEAR",
+          payload: { selectedYear: yearArrayData[0] },
+        });
+        dispatch({
+          type: "SET_YEAR_ARRAY",
+          payload: { yearArray: yearArrayData },
+        });
       } catch (error) {
         console.error("Error fetching expenses:", error);
       }
@@ -147,7 +266,12 @@ export default function ReactExpenseViewWeb() {
       <Box className="flex flex-row items-center justify-center">
         <Tabs
           value={selectedTab}
-          onChange={(_, newValue) => setSelectedTab(newValue)}
+          onChange={(_, newValue) =>
+            dispatch({
+              type: "SET_SELECTED_TAB",
+              payload: { selectedTab: newValue },
+            })
+          }
           textColor="primary"
           indicatorColor="primary"
           aria-label="Table Tabs"
