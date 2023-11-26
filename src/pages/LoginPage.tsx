@@ -25,10 +25,10 @@ export default function LoginPage(props: ILoginScreenProps) {
   }
   return (
     <Container>
+      <h2 className=" text-gray-700  text-4xl mb-5 col-span-2">
+        React Expense View
+      </h2>
       <Box className="border-gray-400 border-3 bg-gradient-to-br from-green-200 via-white to-green-200 rounded-2xl shadow-2xl grid grid-row-2 gap-1 border sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1200px]  w-full p-6 space-x-6 ">
-        <h2 className=" text-gray-700  text-4xl mb-5 col-span-2">
-          React Expense View
-        </h2>
         <Box className="col-start-1  rounded-lg ">
           <h2 className="text-gray-900  text-3xl p-6">Login Page</h2>
           <p className=" text-gray-700 p-4 text-2xl">
