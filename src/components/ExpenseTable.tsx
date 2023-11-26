@@ -7,11 +7,11 @@ import {
   StyledTableRow,
   StyledTableHead,
 } from "../styles/tableStyles.ts";
-import { Expense } from "../types/expenseType.ts";
+import { Expense, ExpenseCategory } from "../types/expenseType.ts";
 import { formatCurrency } from "../helpers/tableHelpers.ts";
 
 interface ExpenseTableProps {
-  rows: Expense[];
+  rows: Expense[] | ExpenseCategory[];
   tab: string;
 }
 
@@ -24,7 +24,9 @@ export function ExpenseTable({ rows, tab }: ExpenseTableProps) {
   if (tab === "Detail") {
     tableHeaders = ["DESCRIPTION", "CATEGORY", "VALUE", "MONTH", "DAY"];
   }
-
+  function isExpense(row: Expense | ExpenseCategory): row is Expense {
+    return (row as Expense).descricao !== undefined;
+  }
   return (
     <TableContainer component={Paper}>
       <StyledTable
@@ -47,12 +49,12 @@ export function ExpenseTable({ rows, tab }: ExpenseTableProps) {
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                {tab === "Detail" && (
+                {tab === "Detail" && isExpense(row) && (
                   <StyledTableCell>{row.descricao}</StyledTableCell>
                 )}
                 <StyledTableCell>{row.categoria}</StyledTableCell>
                 <StyledTableCell>{formatCurrency(row.valor)}</StyledTableCell>
-                {tab === "Detail" && (
+                {tab === "Detail" && isExpense(row) && (
                   <>
                     <StyledTableCell>{row.mes.split("-")[1]}</StyledTableCell>
                     <StyledTableCell>{row.dia}</StyledTableCell>

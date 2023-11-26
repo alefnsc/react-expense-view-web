@@ -14,12 +14,13 @@ import {
   formatCurrency,
   monthArray,
 } from "../helpers/tableHelpers.ts";
-import { Expense } from "../types/expenseType.ts";
+import { Expense, ExpenseCategory } from "../types/expenseType.ts";
 import { SelectsContainer } from "../components/SelectsContainer.tsx";
 
 export default function ReactExpenseViewWeb() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [rows, setRows] = useState<Expense[]>([]);
+  const [categoryRows, setCategoryRows] = useState<ExpenseCategory[]>([]);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [yearArray, setYearArray] = useState<string[]>([]);
@@ -63,6 +64,28 @@ export default function ReactExpenseViewWeb() {
       .map((expense) => createData(expense));
     setRows(newRows);
   }, [expenses, month]);
+
+  useEffect(() => {
+    if (selectedTab === "Summary") {
+      const newRows = rows.reduce((acc, expense) => {
+        const categoryIndex = acc.findIndex(
+          (item) => item.categoria === expense.categoria
+        );
+        if (categoryIndex === -1) {
+          acc.push({
+            id: expense.categoria,
+            categoria: expense.categoria,
+            valor: expense.valor,
+          });
+        } else {
+          acc[categoryIndex].valor += expense.valor;
+        }
+        return acc;
+      }, [] as ExpenseCategory[]);
+
+      setCategoryRows(newRows);
+    }
+  }, [selectedTab, rows]);
 
   useEffect(() => {
     const total = getTotalExpenses(rows);
@@ -124,7 +147,10 @@ export default function ReactExpenseViewWeb() {
           <Tab value="Detail" label="Detail" />
         </Tabs>
       </Box>
-      <ExpenseTable rows={rows} tab={selectedTab} />
+      <ExpenseTable
+        rows={selectedTab === "Summary" ? categoryRows : rows}
+        tab={selectedTab}
+      />
     </>
   );
 }
